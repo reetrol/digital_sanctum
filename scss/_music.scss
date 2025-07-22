@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+/* =============================================
+   PALETTE DE COULEUR - DIGITAL SANCTUM
+   Inspirée par l'analog horror / cybercore
+============================================= */
+
+// Variables de couleur - à ajuster selon vos préférences
+$color-primary: #0a0a0a; // Noir profond (presque noir)
+$color-secondary: #525252; // Noir légèrement plus clair
+$color-accent-red: #ff0033; // Rouge vif (pour accents)
+$color-accent-blue: #0066cc; // Bleu lien (comme les liens cliquables)
+$color-text-primary: #e0e0e0; // Gris très clair (texte principal)
+$color-text-secondary: #aaaaaa; // Gris moyen (texte secondaire)
+$color-text-tertiary: #777777; // Gris foncé (texte discret)
+
+
+
+$color-metal-dark: #1e1e1e;          // Acier sombre
+$color-metal: #2c2c2c;               // Gris métal de base
+$color-metal-light: #3f3f3f;         // Reflets doux
+$color-chrome-edge: #b0c4de;         // Reflet acier clair bleuté
+$color-glow-blue: #00ccff;           // Lumière néon bleue
+$color-glow-white: #f0f8ff;          // Éclairage léger
+$color-panel-glass: rgba(255, 255, 255, 0.03);
+$color-text-primary: #e6f2ff;
+$color-text-secondary: #a3b7c7;
+$color-text-tertiary: #5f6f7f;
+
+
+*{
+  cursor: url('assets/images/crosscursor.gif'), auto !important;
+}
+
+.text-blue {
+  color: $color-accent-blue;
+}
+
+
+body {
+  background-color: $color-primary;
+  color: $color-text-primary;
+  font-family: 'Comic Sans MS', cursive; // Changement unique ici
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: center; // Centre verticalement
+  align-items: center; // Centre horizontalement
+}
+
+.nav-links {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.nav-link {
+  color: $color-accent-blue;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid $color-accent-blue;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(0, 102, 204, 0.1), rgba(0, 102, 204, 0.05));
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(145deg, rgba(0, 102, 204, 0.2), rgba(0, 102, 204, 0.1));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+  }
+}

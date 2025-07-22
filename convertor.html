@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/image_converter.js" defer></script>
+
+  <title>Digital Sanctum - Image Converter</title>
+</head>
+<body>
+  <div id="root">
+    <header class="site-header">
+      <h1 class="site-title">Image to Pixel Art Converter</h1>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">← Back to Sanctum</a>
+      </nav>
+    </header>
+
+    <main class="site-main">
+        
+      <section class="image-converter-section">
+        <div class="pixel-converter-container">
+          <!-- Zone de drag & drop -->
+          <div class="converter-drop-frame">
+            <div class="converter-drop-label">📁 Glissez votre image ici<br>ou cliquez pour parcourir</div>
+          </div>
+          
+          <div class="converter-main-area">
+            <!-- Contrôles -->
+            <div class="converter-controls-frame">
+              <div class="converter-control-group">
+                <label>Taille des pixels:</label>
+                <div class="converter-slider-group">
+                  <input type="range" min="2" max="20" value="8" class="converter-slider" id="pixel-size-slider">
+                  <input type="number" min="2" max="20" value="8" class="converter-number-input" id="pixel-size-input">
+                </div>
+                <div class="converter-value-label" id="pixel-size-label">8</div>
+              </div>
+              
+              <div class="converter-control-group">
+                <label>Méthode de conversion:</label>
+                <select class="converter-select" id="method-select">
+                  <option value="simple">Seuil simple</option>
+                  <option value="floyd-steinberg">Floyd-Steinberg</option>
+                  <option value="bayer2">Bayer 2x2</option>
+                  <option value="bayer4">Bayer 4x4</option>
+                  <option value="random">Aléatoire</option>
+                  <option value="atkinson">Atkinson</option>
+                  <option value="analog-horror">Analog Horror</option>
+                </select>
+                <div class="converter-method-note" id="method-note">Floyd-Steinberg: Diffusion d'erreur pour des dégradés naturels</div>
+              </div>
+              
+              <div class="converter-control-group">
+                <label>Seuil noir/blanc:</label>
+                <div class="converter-slider-group">
+                  <input type="range" min="0" max="255" value="128" class="converter-slider" id="threshold-slider">
+                  <input type="number" min="0" max="255" value="128" class="converter-number-input" id="threshold-input">
+                </div>
+                <div class="converter-value-label" id="threshold-label">128</div>
+              </div>
+              
+              <button class="converter-button" id="convert-btn" style="display: none;">🎨 Convertir</button>
+              <button class="converter-button" id="save-btn" disabled>💾 Sauvegarder</button>
+              <div class="converter-info-label" id="info-label">Aucune image chargée</div>
+            </div>
+            
+            <!-- Prévisualisation -->
+            <div class="converter-preview-frame">
+              <div class="converter-canvas-container">
+                <canvas id="preview-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="converter-note">
+            Formats supportés: JPG, PNG, BMP, GIF | Cliquez dans le champ seuil pour saisir une valeur précise
+          </div>
+        </div>
+        
+        <input type="file" id="file-input" accept="image/*" style="display:none;">
+      </section>
+    </main>
+  </div>
+  
+  <div id="upload-message-overlay" class="hidden">
+    <p id="upload-message-text"></p>
+  </div>
+</body>
+</html>

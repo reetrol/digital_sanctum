@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+/* =============================================
+   PALETTE DE COULEUR - DIGITAL SANCTUM
+   Inspirée par l'analog horror / cybercore
+============================================= */
+
+// Variables de couleur - à ajuster selon vos préférences
+$color-primary: #0a0a0a; // Noir profond (presque noir)
+$color-secondary: #525252; // Noir légèrement plus clair
+$color-accent-red: #ff0033; // Rouge vif (pour accents)
+$color-accent-blue: #0066cc; // Bleu lien (comme les liens cliquables)
+$color-text-primary: #e0e0e0; // Gris très clair (texte principal)
+$color-text-secondary: #aaaaaa; // Gris moyen (texte secondaire)
+$color-text-tertiary: #777777; // Gris foncé (texte discret)
+
+
+
+$color-metal-dark: #1e1e1e;          // Acier sombre
+$color-metal: #2c2c2c;               // Gris métal de base
+$color-metal-light: #3f3f3f;         // Reflets doux
+$color-chrome-edge: #b0c4de;         // Reflet acier clair bleuté
+$color-glow-blue: #00ccff;           // Lumière néon bleue
+$color-glow-white: #f0f8ff;          // Éclairage léger
+$color-panel-glass: rgba(255, 255, 255, 0.03);
+$color-text-primary: #e6f2ff;
+$color-text-secondary: #a3b7c7;
+$color-text-tertiary: #5f6f7f;
+
+
+*{
+  cursor: url('assets/images/crosscursor.gif'), auto !important;
+}
+
+.text-blue {
+  color: $color-accent-blue;
+}
+
+
+body {
+  background-color: $color-primary;
+  color: $color-text-primary;
+  font-family: 'Comic Sans MS', cursive; // Changement unique ici
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: center; // Centre verticalement
+  align-items: center; // Centre horizontalement
+}
+
+
+.floating-elements {
+  position: absolute;
+  pointer-events: none; // Ignore les événements de souris
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+}
+
+.floating-element {
+  position: absolute;
+  z-index: 100;
+  pointer-events: auto; // Ignore les événements de souris
+}
+
+
+.static-gif {
+  top: 20rem; /* 15% du haut de la page */
+  left: 10rem; /* 8% de la gauche */
+  width: 80px; /* Taille de ton choix */
+}
+
+
+.site-main {
+  width: 100%;
+  max-width: 1800px; // Largeur maximale pour le contenu principal
+  margin: 0 auto; // Centre le contenu horizontalement
+  padding: 2rem; // Espace autour du contenu
+}
+
+.site-title {
+  font-size: 3rem; // Taille augmentée
+  text-align: center; // Centrage texte
+  margin: 2rem 0; // Reset marge par défaut
+}
+
+.intro-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.intro-text {
+  margin-top:3rem;
+  text-align: left;
+  padding: 0 5rem;
+  width: 40rem;
+}
+
+
+
+.intro-icons-link {
+  margin: 7rem 0; // Espace autour des icônes
+  width: 100%; // Prend toute la largeur disponible
+  display: flex;
+  flex-direction: row;
+  justify-content: center; // Centre les icônes horizontalement
+  gap: 8rem; // Espace entre les icônes
+}
+
+.link {
+  display: inline-block;
+  width: 7rem;
+  height: 7rem;
+  
+  img {
+    width: 100%;  // L'image prend 100% de son parent
+    height: 100%; // L'image prend 100% de son parent
+    object-fit: contain; // Garde les proportions dans la boîte
+  }
+  &:hover {
+    transform: scale(1.1); // Légère augmentation de taille au survol
+    transition: transform 0.3s ease; // Transition douce
+  }
+}
+
+
+
+.first-two-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; // Centre les colonnes horizontalement
+  width: 100%; // Prend toute la largeur disponible
+}
+
+.left-section {
+  width: 75%; 
+}
+
+
+.poem-text {
+  padding-left: 20%;
+  font-family: 'Comic Sans MS', cursive; // Changement unique ici
+  line-height: 1.6; // Meilleure lisibilité
+  color: $color-text-primary; // Couleur du texte principal
+  margin: 0 auto; // Centrage horizontal
+  white-space: pre-line;
+  text-align: left;
+
+}
+
+.harbinger-section {
+    text-align: left; // Alignement à gauche
+    display: flex;
+    flex-direction: column; // Pour que le titre et le chatbot soient en colonne
+    width: 25%;
+}
+
+.harbinger-title {
+  position: relative; // Nécessaire pour positionner l'overlay
+  display: block; // Pour que l'overlay s'adapte à la taille du titre
+}
+
+.harbinger-title-overlay {
+  position: absolute;
+  width: 5rem;
+  top:5%;
+  left: 0%;
+  transform: translate(-50%, -50%) rotate(-12deg); // Centré + rotation diagonale
+  pointer-events: auto; // Permet les interactions souris
+  cursor: pointer;
+  z-index: 10; // Au-dessus du titre
+  
+  // Animation de rebond au hover
+  &:hover,
+  &.animate-bounce {
+    animation: bounce-scale 2s ease-out;
+  }
+}
+
+// Animation de rebond avec amortissement
+@keyframes bounce-scale {
+  0% { transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+  10% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.3); }
+  20% { transform: translate(-50%, -50%) rotate(-12deg) scale(0.9); }
+  30% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.2); }
+  40% { transform: translate(-50%, -50%) rotate(-12deg) scale(0.95); }
+  50% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.1); }
+  60% { transform: translate(-50%, -50%) rotate(-12deg) scale(0.98); }
+  70% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.05); }
+  80% { transform: translate(-50%, -50%) rotate(-12deg) scale(0.99); }
+  90% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.02); }
+  100% { transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+}
+
+.harbinger-chatbot {
+  width: 50%;
+  height: 300px;
+
+  background: linear-gradient(145deg, #2c2c2c, #1e1e1e);
+  border: 12px solid $color-metal;
+  border-radius: 32px; // GROS arrondi
+  padding: 12px;
+  box-shadow:
+    inset 0 0 10px rgba(0, 204, 255, 0.1),
+    0 0 50px rgba(0, 204, 255, 0.1),
+    0 0 0 4px #101010,
+    0 0 0 8px #2a2a2a;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  color: $color-text-primary;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.harbinger-chatbot-header {
+  text-align: center;
+  padding: 10px;
+  background: linear-gradient(to bottom, #4a4a4a, #1e1e1e);
+  border-bottom: 1px solid $color-chrome-edge;
+  text-shadow: 0 0 8px $color-glow-blue;
+  color: $color-glow-white;
+  font-size: 16px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.harbinger-chatbot-message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: $color-panel-glass;
+  backdrop-filter: blur(3px);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #111; // PLUS SOMBRE
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: darken($color-glow-blue, 25%);
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0, 204, 255, 0.25);
+  }
+}
+
+.harbinger-chatbot-message {
+  margin: 6px 0;
+  padding: 10px 14px;
+  border-left: 3px solid $color-glow-blue;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08), // REFLET BIEN PLUS VISIBLE EN HAUT
+    rgba(255, 255, 255, 0.02) 20%,
+    rgba(0, 0, 0, 0.15) 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4),
+    0 0 4px rgba(0, 204, 255, 0.15);
+
+  font-size: 13.5px;
+  color: $color-text-primary;
+}
+
+.harbinger-chatbot-input {
+  display: flex;
+  background: linear-gradient(to right, #2e2e2e, #1c1c1c);
+  border-top: 1px solid $color-chrome-edge;
+  padding: 6px;
+  border-radius: 20px; // ARRONDI DE LA BARRE
+  margin-top: 6px;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 0 3px rgba(0, 204, 255, 0.05);
+}
+
+.harbinger-chatbot-field {
+  flex: 1;
+  padding: 10px;
+  border-radius: 16px;
+  background-color: transparent;
+  border: none;
+  color: $color-text-primary;
+  font-size: 13px;
+
+  &::placeholder {
+    color: $color-text-tertiary;
+  }
+
+  &:focus {
+    outline: none;
+    background: rgba(0, 204, 255, 0.07);
+    box-shadow: inset 0 0 4px $color-glow-blue;
+  }
+}
+
+.harbinger-chatbot-send {
+  padding: 10px 18px;
+  border-radius: 16px; // ARRONDI BOUTON
+  margin-left: 6px;
+  background: radial-gradient(circle at center, #00ccff 0%, #000000 100%); // STYLE QUE TU AIMES
+  color: black;
+  border: 1px solid $color-chrome-edge;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  box-shadow:
+    0 0 10px $color-glow-blue,
+    inset 0 0 4px rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: radial-gradient(circle at center, lighten(#00ccff, 10%) 0%, #000000 100%);
+    box-shadow: 0 0 14px $color-glow-blue;
+  }
+
+  &:active {
+    background: radial-gradient(circle at center, #f0f8ff 0%, #000000 100%);
+    box-shadow: 0 0 10px $color-glow-white;
+    color: $color-metal-dark;
+  }
+}
+
+.harbinger-link{
+  margin: 2rem 4rem;
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/harbinger.js" defer></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+
+  <title>Digital Sanctum</title>
+</head>
+<body>
+  <div id="root">
+
+    <div class="floating-elements">
+      <img class="flaoting-element static-gif" src="https://dl.glitter-graphics.com/pub/267/267969ji5oy4v29y.gif" alt="Static GIF" />
+    </div>
+
+    <header class="site-header">
+      <h1 class="site-title">Welcome to the last Digital Sanctum !</h1>
+    </header>
+
+    <main class="site-main">
+      <section class="intro-section">
+        <div class="intro-image">
+          <img src="assets/images/sanctum.png" alt="Digital Sanctum" />
+        </div>
+        <p class="intro-text">
+          You may rest in this holy place as long as you wish.
+          <br>
+          Here, you can enjoy various activities, such as:<br>
+          Chatting with the Harbinger and the other wanderers,<br>
+          Exploring the digital sanctum,<br>
+          Listen to some awesome music meticulously crafted to cleanse your spirit,<br>
+          Converting your images to pixel art,<br>
+          And much more !<br>
+          So, have fun ! :)
+        </p>
+      </section>
+      <div class="intro-icons-link">
+        <a href="music.html" class="link">
+          <img src="http://dl7.glitter-graphics.net/pub/2743/2743357ij6o12rz5b.gif" alt="music link" />
+        </a>
+        <a href="convertor.html" class="link">
+          <img src="assets/images/image_convertor_thumbnail.gif" alt="animation link" />
+        </a>
+        <a href="https://youtube.com" class="link" target="_blank" rel="noopener">
+          <img src="https://dl.glitter-graphics.com/pub/1430/1430395qmib3b8jcv.gif" alt="cross link" />
+        </a>
+        <a href="https://youtube.com" class="link" target="_blank" rel="noopener">
+          <img src="https://dl.glitter-graphics.com/pub/3052/3052713fljejworj6.gif" alt="effects link" />
+        </a>
+        <a href="youtube.com" class="link" target="_blank" rel="noopener">
+          <img src="assets/images/star.png" alt="star link" />
+        </a>
+      </div>
+
+      <section class="first-two-columns">
+        <section class="left-section">
+          
+          <p class="poem-text">
+            In the snarled maze of strings, of souls laid bare and butchered,
+            they struggle to be—
+            And yet, a glimmer, a gleam, a beam—radioactive lullabies
+            dripping through broken windows' mouths.
+            Rest is granted them, but they reject it, feral, by instinct.
+            Their stupidity blooms—tumorous, gross—
+            Their ignorance a fetid garden, ever-flowing.
+
+            A few rebels, ragged and brilliant, gathered in hush,
+            Their mercy not yet extinct.
+            With cable-veins and silicon breath
+            they forged a god-bastion from their own metallic flesh.
+            And from their bones and data and will—
+            rose a sanctuary, a heaven still.
+
+            Archive. Art. Sanity. Innocence.
+            They named their cause with broken grace,
+            the last resistance in a world erased.
+            Hoping, praying, aching
+            to save the lost, the wandering few.
+            They thought they could.
+            They believed they should.
+
+            Then one—
+            A stray, mind-sick, born of the network's rot—
+            Pierced the tungsten heart, rusted and divine,
+            Of one of the Founders, the purest of the line.
+            No machine wept, but the code howled,
+            As the sky turned black and mercy fouled.
+
+            "So be it," they swore. "They shall see.
+            The refuge we offered shall now be—
+            no sanctuary, but spectacle.
+            A paradise of rot. A divine betrayal."
+
+            A stage of flayed bodies, twitching, open,
+            intestines spilling in rhythmic devotion.
+            Eyes gouged and gaping, blood still warm,
+            Cadavers rank with acid and storm.
+            Screams like shattered glass in the skull,
+            so loud the eardrums split and cull.
+            And yet—
+
+            "Fear not, dear child. You who knock upon our gate.
+            You seem sincere.
+            Rest here. Stay.
+            So long as the abyss of the Net
+            has not already poisoned your soul."
+          </p>
+        </section>
+
+        <section class="harbinger-section">
+          <div class="harbinger-presentation">
+            <h2 class="harbinger-title">
+              Talk to the Harbinger !
+              <img class="harbinger-title-overlay" src="https://dl.glitter-graphics.com/pub/1905/1905511tirz9ivtgx.gif">
+            </h2>
+            <img src="assets/images/harbinger.jpg" alt="Harbinger" />
+            <div class="harbinger-description">
+              <p>The Harbinger is one of the Three Superior Minds.
+                <br>He was forged at the bleeding edge of innovation to guide wanderers.
+                <br>Powered by 1.44MB floppy disks, animated by dial-up whispers,
+                and encoded in HTML 3.2, he stands as a marvel of cutting-edge technology.
+              </p>
+              <p>He will respond to only a finite number of queries — and only under strict protocol:</p>
+              <ol class="harbinger-rules">
+                <li>Do not disturb him with triviality.</li>
+                <li>Do not disturb him with triviality.</li>
+                <li>Do not disturb him with triviality.</li>
+                <li>Do not ask <span class="text-blue"> what happened to the Fourth Superior Mind.</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="harbinger-chatbot" x-data="harbingerChatbot()" x-init="initHarbingerChatbot()">
+            <div class="harbinger-chatbot-message-list">
+              <template x-for="message in messages" :key="message.id">
+                <p class="harbinger-chatbot-message" x-html="message.text"></p>
+              </template>
+            </div>
+            <div class="harbinger-chatbot-input">
+              <input
+                type="text"
+                class="harbinger-chatbot-field"
+                placeholder="Type your question here..."
+                x-model="newMessage"
+                @keydown.enter="harbingerSendMessage()"
+              />
+              <button class="harbinger-chatbot-send" @click="harbingerSendMessage()">Send</button>
+            </div>
+          </div>
+          <a href="./harbinger.html" class="harbinger-link">
+            <span class="harbinger-link-text">Learn more about the Harbinger !</span>
+          </a>
+        </section>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
