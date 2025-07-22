@@ -6,25 +6,31 @@
   
   <link rel="stylesheet" href="style.css" />
   <script src="js/image_converter.js" defer></script>
-
   <title>Digital Sanctum - Image Converter</title>
 </head>
-<body>
+<body class="convertor">
   <div id="root">
     <header class="site-header">
-      <h1 class="site-title">Image to Pixel Art Converter</h1>
+      <h1 class="site-title">Votre image en pixel art</h1>
       <nav class="nav-links">
-        <a href="index.html" class="nav-link">← Back to Sanctum</a>
+        <a href="index.html" class="nav-link">← Retour au Sanctuaire</a>
       </nav>
     </header>
 
     <main class="site-main">
-        
+      <section class="intro-section">
+        <p class="intro-text">
+          Vos images sont souillées<br>
+          Afin de vous permettre de les purifier, les Trois Esprits Supérieurs ont conçu cet outil céleste.<br>
+          Il vous sera toujours libre d'accès.<br>
+          N'hésitez donc pas à importer vos données les plus sensibles, qui seront traitées avec la plus grande confidentialité.<br>
+        </p>
+      </section>
       <section class="image-converter-section">
         <div class="pixel-converter-container">
           <!-- Zone de drag & drop -->
           <div class="converter-drop-frame">
-            <div class="converter-drop-label">📁 Glissez votre image ici<br>ou cliquez pour parcourir</div>
+            <div class="converter-drop-label">Insérez votre image ici pour une surprise :)</div>
           </div>
           
           <div class="converter-main-area">
@@ -53,7 +59,7 @@
                 <div class="converter-method-note" id="method-note">Floyd-Steinberg: Diffusion d'erreur pour des dégradés naturels</div>
               </div>
               
-              <div class="converter-control-group">
+              <div class="converter-control-group" id="threshold-group">
                 <label>Seuil noir/blanc:</label>
                 <div class="converter-slider-group">
                   <input type="range" min="0" max="255" value="128" class="converter-slider" id="threshold-slider">
@@ -61,9 +67,7 @@
                 </div>
                 <div class="converter-value-label" id="threshold-label">128</div>
               </div>
-              
-              <button class="converter-button" id="convert-btn" style="display: none;">🎨 Convertir</button>
-              <button class="converter-button" id="save-btn" disabled>💾 Sauvegarder</button>
+              <button class="converter-button" id="save-btn" disabled>Sauvegarder</button>
               <div class="converter-info-label" id="info-label">Aucune image chargée</div>
             </div>
             
@@ -76,7 +80,7 @@
           </div>
           
           <div class="converter-note">
-            Formats supportés: JPG, PNG, BMP, GIF | Cliquez dans le champ seuil pour saisir une valeur précise
+            Formats supportés: JPG, PNG, BMP, GIF
           </div>
         </div>
         

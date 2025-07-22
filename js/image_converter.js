@@ -1,7 +1,5 @@
 class PixelArtConverter {
   constructor() {
-    // Correction des sélecteurs
-    
     this.dropLabel = document.querySelector('.converter-drop-label');
     this.dropFrame = document.querySelector('.converter-drop-frame');
     this.fileInput = document.getElementById('file-input');
@@ -13,28 +11,24 @@ class PixelArtConverter {
     this.thresholdSlider = document.getElementById('threshold-slider');
     this.thresholdInput = document.getElementById('threshold-input');
     this.thresholdLabel = document.getElementById('threshold-label');
-    this.convertBtn = document.getElementById('convert-btn');
     this.saveBtn = document.getElementById('save-btn');
     this.infoLabel = document.getElementById('info-label');
     this.canvas = document.getElementById('preview-canvas');
     this.ctx = this.canvas.getContext('2d');
     
-    // Variables d'état
     this.originalImage = null;
     this.convertedImageData = null;
     
-    // Matrices de dithering
     this.bayerMatrix2x2 = [0, 2, 3, 1].map(v => v / 4);
     this.bayerMatrix4x4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => v / 16);
     
-    // Initialisation
     this.initEventListeners();
     this.updateMethodNote();
   }
   
   initEventListeners() {
-    // Drag & drop
     this.dropFrame.addEventListener('click', () => this.fileInput.click());
+    
     this.dropFrame.addEventListener('dragover', (e) => {
       e.preventDefault();
       this.dropFrame.style.borderColor = '#4a86e8';
@@ -51,36 +45,40 @@ class PixelArtConverter {
       
       if (e.dataTransfer.files.length) {
         this.loadImage(e.dataTransfer.files[0]);
+        showUploadMessage();
+        showTypingOverlayMessage("Merci d'avoir chargé votre image. Grâce à vous, nous ingérons de nouvelles informations...");
+
       }
     });
     
-    // Sélection de fichier
     this.fileInput.addEventListener('change', (e) => {
       if (e.target.files.length) {
         this.loadImage(e.target.files[0]);
+        showUploadMessage();
+        showTypingOverlayMessage("Merci d'avoir chargé votre image. Grâce à vous, nous ingérons de nouvelles informations...");
+
       }
     });
     
-    // Contrôles
     this.pixelSizeSlider.addEventListener('input', () => this.onParamChange());
     this.pixelSizeInput.addEventListener('input', () => this.onParamChange());
     this.methodSelect.addEventListener('change', () => this.onMethodChange());
     this.thresholdSlider.addEventListener('input', () => this.onParamChange());
     this.thresholdInput.addEventListener('input', () => this.onParamChange());
-    
-    // Boutons
-    this.convertBtn.addEventListener('click', () => this.convertImage());
     this.saveBtn.addEventListener('click', () => this.saveImage());
   }
   
   onMethodChange() {
     this.updateMethodNote();
-    
-    // Activer/désactiver le seuil selon la méthode
     const method = this.methodSelect.value;
-    // CORRECTION : Ajouter bayer2 et bayer4 à la liste des méthodes qui n'utilisent pas le seuil
+    // Les méthodes qui n'ont PAS besoin du seuil et doivent désactiver les contrôles seuil
     const disableThreshold = ['floyd-steinberg', 'atkinson', 'bayer2', 'bayer4'].includes(method);
-    
+    const thresholdGroup = document.getElementById('threshold-group');
+    if (disableThreshold) {
+      thresholdGroup.classList.add('disabled-group');
+    } else {
+    thresholdGroup.classList.remove('disabled-group');
+    }
     this.thresholdSlider.disabled = disableThreshold;
     this.thresholdInput.disabled = disableThreshold;
     this.thresholdLabel.style.color = disableThreshold ? '#aaa' : '#666';
@@ -100,12 +98,10 @@ class PixelArtConverter {
       'atkinson': 'Atkinson: Diffusion spéciale effet vintage Mac',
       'analog-horror': 'Analog Horror: Distorsion VHS avec artefacts et grain'
     };
-    
     this.methodNote.textContent = notes[this.methodSelect.value] || '';
   }
   
   onParamChange() {
-    // Synchroniser les valeurs
     const pixelSize = Math.min(20, Math.max(2, parseInt(this.pixelSizeSlider.value) || 8));
     this.pixelSizeSlider.value = pixelSize;
     this.pixelSizeInput.value = pixelSize;
@@ -121,12 +117,7 @@ class PixelArtConverter {
     }
   }
   
-  browseImage() {
-    this.fileInput.click();
-  }
-
   loadImage(file) {
-    // Vérification du type de fichier
     const validTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/gif'];
     if (!validTypes.includes(file.type)) {
       this.infoLabel.textContent = "Format d'image non supporté";
@@ -134,15 +125,16 @@ class PixelArtConverter {
     }
     
     const reader = new FileReader();
-    
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
         this.originalImage = img;
         this.dropLabel.textContent = `✅ ${file.name}`;
         this.infoLabel.textContent = `${img.width}×${img.height} pixels`;
-        this.convertBtn.disabled = false;
-        this.convertImage();
+        this.saveBtn.disabled = false;
+
+        this.onParamChange(); // met à jour les paramètres
+        this.convertImage();  // convertit immédiatement
       };
       img.onerror = () => {
         this.infoLabel.textContent = "Erreur de chargement de l'image";
@@ -159,28 +151,23 @@ class PixelArtConverter {
     const threshold = parseInt(this.thresholdInput.value);
     const method = this.methodSelect.value;
     
-    // Calculer la nouvelle taille
     const newWidth = Math.max(1, Math.floor(this.originalImage.width / pixelSize));
     const newHeight = Math.max(1, Math.floor(this.originalImage.height / pixelSize));
     
-    // Créer un canvas temporaire pour le traitement
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = newWidth;
     tempCanvas.height = newHeight;
     const tempCtx = tempCanvas.getContext('2d');
     
-    // Redimensionner l'image
     tempCtx.drawImage(
       this.originalImage,
       0, 0, this.originalImage.width, this.originalImage.height,
       0, 0, newWidth, newHeight
     );
     
-    // Obtenir les données de l'image
     const imageData = tempCtx.getImageData(0, 0, newWidth, newHeight);
     const data = imageData.data;
     
-    // Appliquer la méthode de conversion
     switch(method) {
       case 'floyd-steinberg':
         this.floydSteinbergDither(data, newWidth, newHeight);
@@ -200,14 +187,12 @@ class PixelArtConverter {
       case 'analog-horror':
         this.analogHorrorDither(data, newWidth, newHeight, threshold);
         break;
-      default: // simple threshold
+      default:
         this.simpleThreshold(data, threshold);
     }
     
-    // Mettre à jour l'image temporaire
     tempCtx.putImageData(imageData, 0, 0);
     
-    // Agrandir pour l'effet pixel art
     this.canvas.width = newWidth * pixelSize;
     this.canvas.height = newHeight * pixelSize;
     this.ctx.imageSmoothingEnabled = false;
@@ -217,238 +202,191 @@ class PixelArtConverter {
       0, 0, this.canvas.width, this.canvas.height
     );
     
-    // Stocker les données pour l'export
     this.convertedImageData = this.canvas.toDataURL('image/png');
     this.saveBtn.disabled = false;
   }
   
   simpleThreshold(data, threshold) {
     for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+      const gray = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
       const value = gray > threshold ? 255 : 0;
-      
-      data[i] = value;     // R
-      data[i + 1] = value; // G
-      data[i + 2] = value; // B
+      data[i] = data[i+1] = data[i+2] = value;
     }
   }
   
   floydSteinbergDither(data, width, height) {
     const newData = new Uint8ClampedArray(data);
-    
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = (y * width + x) * 4;
+        const oldR = newData[idx];
+        const oldG = newData[idx+1];
+        const oldB = newData[idx+2];
+        const gray = 0.299 * oldR + 0.587 * oldG + 0.114 * oldB;
+        const newVal = gray > 128 ? 255 : 0;
+        const err = gray - newVal;
         
-        const r = newData[idx];
-        const g = newData[idx + 1];
-        const b = newData[idx + 2];
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        newData[idx] = newData[idx+1] = newData[idx+2] = newVal;
         
-        const newPixel = gray > 128 ? 255 : 0;
-        const error = gray - newPixel;
-        
-        newData[idx] = newPixel;
-        newData[idx + 1] = newPixel;
-        newData[idx + 2] = newPixel;
-        
-        // Diffusion de l'erreur
-        if (x + 1 < width) {
-          this.diffuseError(newData, idx + 4, error, 7/16);
-        }
-        if (y + 1 < height) {
-          if (x > 0) {
-            this.diffuseError(newData, idx + width * 4 - 4, error, 3/16);
+        const distributeError = (xOff, yOff, factor) => {
+          const nx = x + xOff;
+          const ny = y + yOff;
+          if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+            const nidx = (ny * width + nx) * 4;
+            for (let c=0; c<3; c++) {
+              let val = newData[nidx + c] + err * factor;
+              val = Math.min(255, Math.max(0, val));
+              newData[nidx + c] = val;
+            }
           }
-          this.diffuseError(newData, idx + width * 4, error, 5/16);
-          if (x + 1 < width) {
-            this.diffuseError(newData, idx + width * 4 + 4, error, 1/16);
-          }
-        }
+        };
+        
+        distributeError(1, 0, 7/16);
+        distributeError(-1, 1, 3/16);
+        distributeError(0, 1, 5/16);
+        distributeError(1, 1, 1/16);
       }
     }
-    
-    for (let i = 0; i < data.length; i++) {
-      data[i] = newData[i];
-    }
-  }
-  
-  diffuseError(data, idx, error, factor) {
-    const r = data[idx] + error * factor;
-    const g = data[idx + 1] + error * factor;
-    const b = data[idx + 2] + error * factor;
-    
-    data[idx] = Math.max(0, Math.min(255, r));
-    data[idx + 1] = Math.max(0, Math.min(255, g));
-    data[idx + 2] = Math.max(0, Math.min(255, b));
+    data.set(newData);
   }
   
   atkinsonDither(data, width, height) {
     const newData = new Uint8ClampedArray(data);
-    
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = (y * width + x) * 4;
+        const oldR = newData[idx];
+        const oldG = newData[idx+1];
+        const oldB = newData[idx+2];
+        const gray = 0.299 * oldR + 0.587 * oldG + 0.114 * oldB;
+        const newVal = gray > 128 ? 255 : 0;
+        const err = (gray - newVal) / 8;
         
-        const r = newData[idx];
-        const g = newData[idx + 1];
-        const b = newData[idx + 2];
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        newData[idx] = newData[idx+1] = newData[idx+2] = newVal;
         
-        const newPixel = gray > 128 ? 255 : 0;
-        const error = gray - newPixel;
+        const distributeError = (xOff, yOff) => {
+          const nx = x + xOff;
+          const ny = y + yOff;
+          if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+            const nidx = (ny * width + nx) * 4;
+            for (let c=0; c<3; c++) {
+              let val = newData[nidx + c] + err;
+              val = Math.min(255, Math.max(0, val));
+              newData[nidx + c] = val;
+            }
+          }
+        };
         
-        newData[idx] = newPixel;
-        newData[idx + 1] = newPixel;
-        newData[idx + 2] = newPixel;
-        
-        // Diffusion de l'erreur (Atkinson)
-        const fraction = error / 8;
-        
-        if (x + 1 < width) this.diffuseError(newData, idx + 4, error, fraction);
-        if (x + 2 < width) this.diffuseError(newData, idx + 8, error, fraction);
-        if (y + 1 < height) {
-          if (x > 0) this.diffuseError(newData, idx + width * 4 - 4, error, fraction);
-          this.diffuseError(newData, idx + width * 4, error, fraction);
-          if (x + 1 < width) this.diffuseError(newData, idx + width * 4 + 4, error, fraction);
-        }
-        if (y + 2 < height) this.diffuseError(newData, idx + width * 8, error, fraction);
+        distributeError(1, 0);
+        distributeError(2, 0);
+        distributeError(-1, 1);
+        distributeError(0, 1);
+        distributeError(1, 1);
+        distributeError(0, 2);
       }
     }
-    
-    for (let i = 0; i < data.length; i++) {
-      data[i] = newData[i];
-    }
+    data.set(newData);
   }
   
   bayerDither(data, width, height, matrixSize, matrix) {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = (y * width + x) * 4;
-        
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        
+        const gray = 0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2];
         const threshold = matrix[(y % matrixSize) * matrixSize + (x % matrixSize)] * 255;
-        const value = gray > threshold ? 255 : 0;
-        
-        data[idx] = value;
-        data[idx + 1] = value;
-        data[idx + 2] = value;
+        const val = gray > threshold ? 255 : 0;
+        data[idx] = data[idx+1] = data[idx+2] = val;
       }
     }
   }
   
-  randomDither(data, baseThreshold) {
+  randomDither(data, threshold) {
     for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-      
-      const threshold = baseThreshold + (Math.random() * 100 - 50);
-      const value = gray > Math.max(0, Math.min(255, threshold)) ? 255 : 0;
-      
-      data[i] = value;
-      data[i + 1] = value;
-      data[i + 2] = value;
+      const gray = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+      const val = gray > threshold + (Math.random() * 64 - 32) ? 255 : 0;
+      data[i] = data[i+1] = data[i+2] = val;
     }
   }
   
-  analogHorrorDither(data, width, height, baseThreshold) {
-    // Implémentation simplifiée pour l'exemple
-    // (Une version complète serait trop longue pour cette réponse)
-    this.simpleThreshold(data, baseThreshold);
-    
-    // Ajouter du bruit analogique
-    for (let i = 0; i < data.length; i += 4) {
-      if (Math.random() < 0.05) { // 5% de bruit
-        const value = Math.random() > 0.5 ? 255 : 0;
-        data[i] = value;
-        data[i + 1] = value;
-        data[i + 2] = value;
+  analogHorrorDither(data, width, height, threshold) {
+    // Effet VHS avec bruit, grain, distorsion horizontale et vertical
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = (y * width + x) * 4;
+        let gray = 0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2];
+        // Ajout de bruit horizontal et vertical
+        gray += (Math.sin(x * 0.3 + y * 0.2) * 15) + (Math.random() * 20 - 10);
+        const val = gray > threshold ? 255 : 0;
+        data[idx] = data[idx+1] = data[idx+2] = val;
       }
     }
   }
   
   saveImage() {
     if (!this.convertedImageData) return;
-    
-    const link = document.createElement('a');
-    link.href = this.convertedImageData;
-    link.download = `pixel-art-${new Date().getTime()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const a = document.createElement('a');
+    a.href = this.convertedImageData;
+    a.download = 'pixelart.png';
+    a.click();
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  const converter = new PixelArtConverter();
-});
-
-
-const dropArea = document.querySelector('.converter-drop-frame');
-const fileInput = document.querySelector('input[type="file"]');
-let typingInterval;
-let messageContainer = document.getElementById('upload-message');
 
 function showUploadMessage() {
-  const message = "Merci d'avoir chargé votre image. Grâce à vous, nous ingérons de nouvelles informations...";
-  const messageText = messageContainer.querySelector('.message-text');
-  messageText.textContent = '';
-  messageContainer.style.display = 'flex';
+  const info = document.getElementById('info-label');
+  info.textContent = 'Image chargée. Choisissez les paramètres et cliquez sur Convertir.';
+}
 
-  let index = 0;
-  clearInterval(typingInterval);
+let currentTypingTimeout = null;
+let isTyping = false;
 
-  typingInterval = setInterval(() => {
-    messageText.textContent += message.charAt(index);
-    index++;
-    if (index >= message.length) {
-      clearInterval(typingInterval);
-      // Tu peux aussi cacher après un délai si tu veux
+function showTypingOverlayMessage(text, callback) {
+  const overlay = document.getElementById('upload-message-overlay');
+  const textElement = document.getElementById('upload-message-text');
+
+  // Réinitialisation
+  if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
+  isTyping = true;
+  let i = 0;
+  textElement.textContent = '';
+  overlay.classList.remove('hidden');
+
+  function typeChar() {
+    if (!isTyping) return;
+    if (i < text.length) {
+      textElement.textContent += text.charAt(i);
+      i++;
+      currentTypingTimeout = setTimeout(typeChar, 40);
+    } else {
+      isTyping = false;
+      currentTypingTimeout = setTimeout(() => {
+        overlay.classList.add('hidden');
+        if (callback) callback();
+      }, 1000);
     }
-  }, 50);
+  }
+
+  function stopTypingImmediately() {
+    if (isTyping) {
+      isTyping = false;
+      clearTimeout(currentTypingTimeout);
+      overlay.classList.add('hidden');
+      textElement.textContent = ''; // facultatif, au cas où du texte partiel est visible
+      if (callback) callback();
+    }
+  }
+
+  // Supprimer d’abord l’ancien listener (si existant) pour éviter les doublons
+  overlay.removeEventListener('click', stopTypingImmediately);
+  overlay.addEventListener('click', stopTypingImmediately);
+
+  typeChar();
 }
 
-messageContainer.addEventListener('click', () => {
-  clearInterval(typingInterval);
-  messageContainer.style.display = 'none';
-});
 
-// Exemple d’appel quand l’image est chargée (à adapter selon ton code)
-const inputFile = document.querySelector('input[type="file"]');
-fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) {
-    showUploadMessage();
-  }
-});
 
-dropArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  if (e.dataTransfer.files.length > 0) {
-    showUploadMessage();
-  }
-});
-
-// Et pour éviter que le navigateur n’ouvre l’image par défaut en drop
-dropArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-});
-
-function updateSeuilState(isActive) {
-  const slider = document.querySelector('.seuil-slider');
-  if (isActive) {
-    slider.classList.remove('disabled');
-    slider.disabled = false;
-  } else {
-    slider.classList.add('disabled');
-    slider.disabled = true;
-  }
-}
+// Initialisation
+const converter = new PixelArtConverter();
+converter.convertBtn.disabled = true;
+converter.saveBtn.disabled = true;
+converter.thresholdSlider.disabled = false;
+converter.thresholdInput.disabled = false;
